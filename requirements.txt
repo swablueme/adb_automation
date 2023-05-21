@@ -1,1 +1,3 @@
 adbutils == 1.2.9
+matplotlib
+numpy
