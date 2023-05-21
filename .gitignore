@@ -1,2 +1,3 @@
 binaries/*
 screenshot/images/*
+**/__pycache__/
