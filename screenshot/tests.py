@@ -32,15 +32,16 @@ class TestImageMethods(unittest.TestCase):
 
     def test_image_similarity_should_return_best_match(self):
         similarity = assertNotRaises(ImageSimilarity(
-            self.button_image, self.base_image).find_best_match)
-
-        self.assertEqual(1, len(similarity.match_locations))
+            self.button_image, self.base_image).find_best_match().visualise_matches, "best_image_results.png")
+        self.assertEqual(1, len(similarity.match_coords))
+        self.assertEqual(1, len(similarity.match_rectangles))
 
     def test_image_similarity_should_return_all_matches(self):
         similarity = assertNotRaises(ImageSimilarity(
-            self.button_image, self.base_image).find_all_matches().visualise_results)
-        print(similarity.match_locations)
-        self.assertEqual(3, len(similarity.match_locations))
+            self.button_image, self.base_image).find_all_matches(match_type=MatchType.COLOUR).visualise_matches, "all_image_results.png")
+
+        self.assertEqual(4, len(similarity.match_coords))
+        self.assertEqual(3, len(similarity.match_rectangles))
 
 
 if __name__ == '__main__':

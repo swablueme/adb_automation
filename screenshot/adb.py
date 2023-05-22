@@ -1,12 +1,8 @@
 from __future__ import annotations
-from typing import Union
 from adbutils import adb
 import numpy as np
-from PIL.Image import Image
 import time
-import os
-import cv2
-import config
+from image_similarity import ImageConversion
 
 
 class PhoneADB:
