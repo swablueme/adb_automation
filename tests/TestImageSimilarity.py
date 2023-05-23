@@ -10,7 +10,6 @@ from image_similarity import *
 import unittest
 
 
-# @mock.patch("image_similarity.config", config_override)
 class TestImageSimilarity(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestImageSimilarity, self).__init__(*args, **kwargs)
