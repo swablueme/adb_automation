@@ -9,13 +9,12 @@ import os
 import cv2
 import config
 import time
-from scipy.spatial import KDTree
 
 
 def timer(func):
     def wrapper_function(*args, **kwargs):
         t0 = time.time()
-        results = func(*args,  **kwargs)
+        results = func(*args, **kwargs)
         t1 = time.time()
         print(f"time taken for image similarity {func.__name__} {t1-t0}")
         return results
@@ -139,14 +138,14 @@ class ImageSimilarity:
 
 
 class ImageConversion:
-    @ staticmethod
+    @staticmethod
     def PILtoNumpy(img: Image) -> np.ndarray:
         # img.show()
         pilimg = img.convert('RGB')
         open_cv_image = np.asarray(pilimg)
         return open_cv_image
 
-    @ staticmethod
-    def NumpytoPIL(img:  np.ndarray) -> Image:
+    @staticmethod
+    def NumpytoPIL(img: np.ndarray) -> Image:
         imageRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         return PIL.Image.fromarray(imageRGB)

@@ -1,32 +1,21 @@
-import unittest
-from unittest import suite
-from unittest.result import failfast
+import sys
+import os
+from unittest import mock
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../screenshot")
+
+import config_override
+
+from utility import assertNotRaises
 from image_similarity import *
-from parameterized import parameterized
+import unittest
 
 
-def assertNotRaises(func, *args, **kwargs):
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        failfast(e.with_traceback())
-
-
-class TestImageFile(unittest.TestCase):
-    @parameterized.expand([("button.png"),
-                           ("base.png")])
-    def test_when_image_path_provided_should_produce_valid_image(self, image):
-        button_image = assertNotRaises(
-            ImageFile, image)
-        self.assertEqual(int, type(button_image.get_height()))
-        self.assertEqual(int, type(button_image.get_width()))
-        self.assertTrue(True, ImageConversion.NumpytoPIL(
-            button_image.get_image()).verify())
-
-
-class TestImageMethods(unittest.TestCase):
+# @mock.patch("image_similarity.config", config_override)
+class TestImageSimilarity(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(TestImageMethods, self).__init__(*args, **kwargs)
+        super(TestImageSimilarity, self).__init__(*args, **kwargs)
+        patcher = mock.patch("image_similarity.config", config_override)
+        patcher.start()
         self.button_image = ImageFile("button.png")
         self.base_image = ImageFile("base.png")
 

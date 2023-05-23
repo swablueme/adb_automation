@@ -1,3 +1,4 @@
 binaries/*
 screenshot/images/*
+tests/images/*
 **/__pycache__/
