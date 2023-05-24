@@ -148,7 +148,7 @@ class ImageSimilarity:
 
 class Visualise:
     RED = (0, 0, 255)
-    LINE_THICKNESS = 1
+    LINE_THICKNESS = 2
     POINT_RADIUS = 1
 
     @staticmethod
