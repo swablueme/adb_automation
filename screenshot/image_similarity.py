@@ -33,17 +33,24 @@ class ImageFile:
             raise Exception(
                 f"{image_value} must be an PIL image or a filepath(str) to a image!")
 
+        if self.image.shape is None:
+            raise Exception(
+                f"Image was a None value!")
+
         self.height = self.image.shape[:-1][0]
         self.width = self.image.shape[:-1][1]
 
-    def get_image(self):
+    def get_image(self) -> np.ndarray:
         return self.image
 
-    def get_width(self):
+    def get_width(self) -> int:
         return self.width
 
-    def get_height(self):
+    def get_height(self) -> int:
         return self.height
+
+    def view(self) -> None:
+        Visualise.view_image(self)
 
 
 class MatchType(Enum):
@@ -55,7 +62,7 @@ class ImageSimilarity:
     def __init__(self, needle: ImageFile, image_to_search: ImageFile):
         self.match_coords = []
         self.needle = needle
-        self.image_to_search = image_to_search
+        self.searched_image = image_to_search
         self.match_rectangles = []
 
     @timer
@@ -88,7 +95,7 @@ class ImageSimilarity:
     def colour_match(self) -> Mat:
         # Split both into each R, G, B Channel
         imageMainR, imageMainG, imageMainB = cv2.split(
-            self.image_to_search.get_image())
+            self.searched_image.get_image())
         imageNeedleR, imageNeedleG, imageNeedleB = cv2.split(
             self.needle.get_image())
 
@@ -106,12 +113,12 @@ class ImageSimilarity:
 
     def monochrome_match(self) -> Mat:
         return cv2.matchTemplate(
-            self.image_to_search.get_image(), self.needle.get_image(), cv2.TM_CCOEFF_NORMED)
+            self.searched_image.get_image(), self.needle.get_image(), cv2.TM_CCOEFF_NORMED)
 
     def generate_match_rectangles(self) -> None:
         for (match_x, match_y) in self.match_coords:
-            match = [match_x, match_y,
-                     self.needle.get_width(), self.needle.get_height()]
+            match = (match_x, match_y,
+                     self.needle.get_width(), self.needle.get_height())
             # https://learncodebygaming.com/blog/grouping-rectangles-into-click-points
             # lone match results will be disregarded, add it twice to prevent this
             self.match_rectangles.append(match)
@@ -121,20 +128,63 @@ class ImageSimilarity:
             self.match_rectangles, groupThreshold=1, eps=0.05)
         return self
 
-    def visualise_matches(self, file_name="debug.png") -> ImageSimilarity:
+    def save_image(self, file_name="debug") -> ImageSimilarity:
         # debug method to write an image to a file location
-        RED = (0, 0, 255)
-        for rectangle in self.match_rectangles:
+        image = Visualise.draw_match_rectangles(self.searched_image,
+                                                self.match_rectangles)
+        Visualise.save_image(image, file_name)
+        return self
+
+    def view_image(self) -> ImageSimilarity:
+        # debug method to write an image to a file location
+        image = Visualise.draw_match_rectangles(self.searched_image,
+                                                self.match_rectangles)
+        Visualise.view_image(image)
+        return self
+
+    def get_matches(self):
+        return self.match_rectangles
+
+
+class Visualise:
+    RED = (0, 0, 255)
+    LINE_THICKNESS = 1
+    POINT_RADIUS = 1
+
+    @staticmethod
+    def draw_match_rectangles(image: ImageFile, match_rectangles: list[tuple(int)]) -> ImageFile:
+        for rectangle in match_rectangles:
             (x, y, w, h) = rectangle
-            cv2.rectangle(self.image_to_search.get_image(),
+            cv2.rectangle(image.get_image(),
                           (x, y),
                           (x + w, y + h),
-                          color=RED,
-                          thickness=1)
+                          color=Visualise.RED,
+                          thickness=Visualise.LINE_THICKNESS)
+        return image
 
+    @staticmethod
+    def draw_circle(image: ImageFile, coords: list[tuple[int]], radius: int) -> ImageFile:
+        for coord in coords:
+            cv2.circle(image.get_image(), coords, radius,
+                       color=Visualise.RED, thickness=Visualise.LINE_THICKNESS)
+        return image
+
+    @staticmethod
+    def draw_point(image: ImageFile, coords: list[tuple[int]]) -> ImageFile:
+        for coord in coords:
+            cv2.circle(image.get_image(), coord, Visualise.POINT_RADIUS,
+                       color=Visualise.RED, thickness=Visualise.LINE_THICKNESS)
+        return image
+
+    @staticmethod
+    def save_image(image: ImageFile, file_name: str = "debug") -> ImageFile:
         cv2.imwrite(os.path.join(config.CONFIGURATION.IMAGE_DEBUG_FOLDER,
-                    file_name), self.image_to_search.get_image())
-        return self
+                    file_name + ".png"), image.get_image())
+        return image
+
+    @staticmethod
+    def view_image(image: ImageFile) -> None:
+        ImageConversion.NumpytoPIL(image.get_image()).show()
 
 
 class ImageConversion:

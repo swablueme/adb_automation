@@ -1,14 +1,15 @@
+
+
 from unittest import mock
 from tests.utility import assertNotRaises
 from parameterized import parameterized
 import config_override
 import unittest
 from image_similarity import *
-import sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../screenshot")
 
 
 class TestImageFile(unittest.TestCase):
+
     @parameterized.expand([("button.png"),
                            ("base.png")])
     @mock.patch("image_similarity.config", config_override)
