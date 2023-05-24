@@ -32,9 +32,14 @@ class TestClickRegion(unittest.TestCase):
                 test_data_click_region.get_original_match_rectangles())
             Visualise.draw_match_rectangles(
                 test_data,
-                test_data_click_region.get_scaled_match_rectangles())
+                test_data_click_region.get_scaled_match_rectangles(), color=Visualise.GREEN)
             Visualise.draw_point(
                 test_data, test_data_click_region.get_centres())
+
+            for i in range(200):
+                Visualise.draw_point(
+                    test_data, test_data_click_region.get_random_coords(), color=Visualise.BLUE)
+
             Visualise.save_image(
                 test_data, self.__class__.__name__ + self._testMethodName + "_" + str(idx))
 
@@ -42,15 +47,15 @@ class TestClickRegion(unittest.TestCase):
         self.assertEqual(
             [(109, 43)], self.blank_image_click_region.get_centres())
         self.assertEqual(
-            [(354, 1204), (354, 1534), (354, 1864)], self.base_image_click_region.get_centres())
+            [(354, 1204), (354, 1534), (354, 1864)],
+            self.base_image_click_region.get_centres())
 
-    def test_rectangle_should_shrink(self):
+    def test_rectangle_should_scale(self):
         self.assertEqual(
             [(44, 17, 131, 52)], self.blank_image_click_region.get_scaled_match_rectangles())
-
-    def test_should_shrink_all_matches_rectangle(self):
         self.assertEqual(
-            3, len(self.base_image_click_region.get_scaled_match_rectangles()))
+            [(303, 1183, 104, 41), (303, 1513, 104, 41), (303, 1843, 104, 41)],
+            self.base_image_click_region.get_scaled_match_rectangles())
 
 
 if __name__ == '__main__':

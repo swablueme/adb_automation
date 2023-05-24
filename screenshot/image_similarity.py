@@ -148,32 +148,35 @@ class ImageSimilarity:
 
 class Visualise:
     RED = (0, 0, 255)
-    LINE_THICKNESS = 2
+    GREEN = (0, 255, 0)
+    BLUE = (255, 0, 0)
+
+    LINE_THICKNESS = 1
     POINT_RADIUS = 1
 
     @staticmethod
-    def draw_match_rectangles(image: ImageFile, match_rectangles: list[tuple(int)]) -> ImageFile:
+    def draw_match_rectangles(image: ImageFile, match_rectangles: list[tuple(int)], color: tuple[int] = RED) -> ImageFile:
         for rectangle in match_rectangles:
             (x, y, w, h) = rectangle
             cv2.rectangle(image.get_image(),
                           (x, y),
                           (x + w, y + h),
-                          color=Visualise.RED,
+                          color=color,
                           thickness=Visualise.LINE_THICKNESS)
         return image
 
     @staticmethod
-    def draw_circle(image: ImageFile, coords: list[tuple[int]], radius: int) -> ImageFile:
+    def draw_circle(image: ImageFile, coords: list[tuple[int]], radius: int, color: tuple[int] = RED) -> ImageFile:
         for coord in coords:
             cv2.circle(image.get_image(), coords, radius,
-                       color=Visualise.RED, thickness=Visualise.LINE_THICKNESS)
+                       color=color, thickness=Visualise.LINE_THICKNESS)
         return image
 
     @staticmethod
-    def draw_point(image: ImageFile, coords: list[tuple[int]]) -> ImageFile:
+    def draw_point(image: ImageFile, coords: list[tuple[int]], color: tuple[int] = RED) -> ImageFile:
         for coord in coords:
             cv2.circle(image.get_image(), coord, Visualise.POINT_RADIUS,
-                       color=Visualise.RED, thickness=Visualise.LINE_THICKNESS)
+                       color=color, thickness=Visualise.LINE_THICKNESS)
         return image
 
     @staticmethod

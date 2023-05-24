@@ -1,4 +1,5 @@
 from __future__ import annotations
+import random
 import numpy as np
 
 
@@ -42,4 +43,13 @@ class ClickRegion:
     def get_centres(self):
         return self.centres
 
-    # def randomise_click_coordinates(self):
+    def get_random_coords(self):
+        random_coords = []
+        for scaled_match in self.scaled_matches:
+            (top_left_x, top_left_y,
+             width, height) = scaled_match
+            rand_x = random.randint(top_left_x, top_left_x + width)
+            rand_y = random.randint(top_left_y, top_left_y + height)
+            random_coords.append((rand_x, rand_y))
+
+        return random_coords
