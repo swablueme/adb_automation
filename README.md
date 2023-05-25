@@ -1,4 +1,5 @@
-# FEHscript
+# adb_automation
+Aiming to create an automation toolset for adb capable of image recognition
 
 For tessarect (OCR text recognition) follow the installation guide https://github.com/sirfz/tesserocr
 for windows go to the binaries directory open a cmd window and
