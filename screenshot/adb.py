@@ -26,5 +26,4 @@ class PhoneADB:
 
 if __name__ == "__main__":
     # PhoneADB().screenshot()
-
     # d.click(418, 191)
