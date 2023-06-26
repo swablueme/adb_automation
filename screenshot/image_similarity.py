@@ -79,6 +79,8 @@ class ImageSimilarity:
                 match_coords = np.where(results_for_channel >= threshold)
                 match_coords = list(zip(*match_coords[::-1]))
                 total_results[result_channel_name] = match_coords
+
+            # valid matches should be found if the similarity is there for the red, blue and green channels
             intersected_results = set(
                 total_results["R"]).intersection(total_results["B"])
             intersected_results = intersected_results.intersection(
