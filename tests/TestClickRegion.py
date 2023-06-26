@@ -47,14 +47,14 @@ class TestClickRegion(unittest.TestCase):
         self.assertEqual(
             [(109, 43)], self.blank_image_click_region.get_centres())
         self.assertEqual(
-            [(354, 1204), (354, 1534), (354, 1864)],
+            [(354, 1204), (354, 1534)],
             self.base_image_click_region.get_centres())
 
     def test_rectangle_should_scale(self):
         self.assertEqual(
             [(44, 17, 131, 52)], self.blank_image_click_region.get_scaled_match_rectangles())
         self.assertEqual(
-            [(303, 1183, 104, 41), (303, 1513, 104, 41), (303, 1843, 104, 41)],
+            [(303, 1183, 104, 41), (303, 1513, 104, 41)],
             self.base_image_click_region.get_scaled_match_rectangles())
 
 

@@ -69,14 +69,22 @@ class ImageSimilarity:
     def find_all_matches(self, match_type: MatchType = MatchType.GRAYSCALE, threshold: int = 0.95) -> ImageSimilarity:
         if match_type == MatchType.GRAYSCALE:
             results = self.monochrome_match()
+            self.match_coords = np.where(results >= threshold)
+            self.match_coords = list(zip(*self.match_coords[::-1]))
+            self.generate_match_rectangles()
         elif match_type == MatchType.COLOUR:
             results = self.colour_match()
-            threshold *= 3
-
-        self.match_coords = np.where(results >= threshold)
-        self.match_coords = np.array(list(zip(*self.match_coords[::-1])))
-        self.generate_match_rectangles()
-
+            total_results = {}
+            for result_channel_name, results_for_channel in results.items():
+                match_coords = np.where(results_for_channel >= threshold)
+                match_coords = list(zip(*match_coords[::-1]))
+                total_results[result_channel_name] = match_coords
+            intersected_results = set(
+                total_results["R"]).intersection(total_results["B"])
+            intersected_results = intersected_results.intersection(
+                total_results["G"])
+            self.match_coords = list(intersected_results)
+            self.generate_match_rectangles()
         return self
 
     @timer
@@ -85,11 +93,11 @@ class ImageSimilarity:
             results = self.monochrome_match()
         elif match_type == MatchType.COLOUR:
             results = self.colour_match()
-
-        results = self.monochrome_match()
+            results = results["R"] + results["B"] + results["G"]
         _, _, _, best_match = cv2.minMaxLoc(results)
         self.match_coords = np.array([best_match])
         self.generate_match_rectangles()
+
         return self
 
     def colour_match(self) -> Mat:
@@ -107,9 +115,7 @@ class ImageSimilarity:
         resultB = cv2.matchTemplate(
             imageMainB, imageNeedleB, cv2.TM_CCOEFF_NORMED)
 
-        # Add together to get the total score
-        result = resultB + resultG + resultR
-        return result
+        return {"B": resultB, "G": resultG, "R": resultR}
 
     def monochrome_match(self) -> Mat:
         return cv2.matchTemplate(
@@ -168,7 +174,7 @@ class Visualise:
     @staticmethod
     def draw_circle(image: ImageFile, coords: list[tuple[int]], radius: int, color: tuple[int] = RED) -> ImageFile:
         for coord in coords:
-            cv2.circle(image.get_image(), coords, radius,
+            cv2.circle(image.get_image(), coord, radius,
                        color=color, thickness=Visualise.LINE_THICKNESS)
         return image
 
