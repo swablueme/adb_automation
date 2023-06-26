@@ -80,7 +80,9 @@ class ImageSimilarity:
                 match_coords = list(zip(*match_coords[::-1]))
                 total_results[result_channel_name] = match_coords
 
-            # valid matches should be found if the similarity is there for the red, blue and green channels
+            # valid matches should be found if the similarity is there for all three of the red, blue and green channels
+            # because otherwise one area might perform really good on red and another might perform really good on blue
+            # and the poor performance on one colour might be cancelled out by another
             intersected_results = set(
                 total_results["R"]).intersection(total_results["B"])
             intersected_results = intersected_results.intersection(
