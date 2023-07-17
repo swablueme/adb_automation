@@ -101,7 +101,6 @@ class ImageSimilarity:
         _, _, _, best_match = cv2.minMaxLoc(results)
         self.match_coords = np.array([best_match])
         self.generate_match_rectangles()
-
         return self
 
     def colour_match(self) -> Mat:

@@ -36,7 +36,7 @@ class TestClickRegion(unittest.TestCase):
             Visualise.draw_point(
                 test_data, test_data_click_region.get_centres())
 
-            for i in range(200):
+            for _ in range(200):
                 Visualise.draw_point(
                     test_data, test_data_click_region.get_random_coords(), color=Visualise.BLUE)
 
