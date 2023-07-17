@@ -15,6 +15,7 @@ class ImageFile:
                 config.CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER, image_value))
         elif type(image_value) == Image:
             self.image = ImageConversion.PILtoNumpy(image_value)
+            self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
         else:
             raise Exception(
                 f"{image_value} must be an PIL image or a filepath(str) to a image!")
@@ -89,7 +90,7 @@ class ImageConversion:
         # img.show()
         pilimg = img.convert('RGB')
         # BGR conversion
-        open_cv_image = np.asarray(pilimg)[:, :, ::-1]
+        open_cv_image = np.asarray(pilimg)
         return open_cv_image
 
     @staticmethod

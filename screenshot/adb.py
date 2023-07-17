@@ -3,19 +3,20 @@ from adbutils import adb
 import numpy as np
 import time
 
-from image import ImageConversion, ImageFile
+from image import ImageFile
+from image_similarity import *
 
 
 class PhoneADB:
     # TODO: make sure adb is started first :(
     # https://stackoverflow.com/questions/14134892/convert-image-from-pil-to-opencv-format
-    SLEEP_INTERVAL = 3
+    SLEEP_INTERVAL = 1
 
     def __init__(self):
         self.device = adb.device("emulator-5554")
         time.sleep(PhoneADB.SLEEP_INTERVAL)
 
-    def screenshot(self) -> np.ndarray:
+    def screenshot(self) -> ImageFile:
         return ImageFile(self.device.screenshot())
 
     def click(self, x: int, y: int) -> None:
@@ -27,5 +28,4 @@ class PhoneADB:
 
 if __name__ == "__main__":
     pass
-    PhoneADB().screenshot().view()
     # d.click(418, 191)
