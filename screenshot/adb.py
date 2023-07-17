@@ -2,7 +2,8 @@ from __future__ import annotations
 from adbutils import adb
 import numpy as np
 import time
-from image_similarity import ImageConversion
+
+from image import ImageConversion, ImageFile
 
 
 class PhoneADB:
@@ -11,11 +12,11 @@ class PhoneADB:
     SLEEP_INTERVAL = 3
 
     def __init__(self):
-        self.device = adb.device()
+        self.device = adb.device("emulator-5554")
         time.sleep(PhoneADB.SLEEP_INTERVAL)
 
     def screenshot(self) -> np.ndarray:
-        return ImageConversion.PILtoNumpy(self.device.screenshot())
+        return ImageFile(self.device.screenshot())
 
     def click(self, x: int, y: int) -> None:
         self.device.click(x, y)
@@ -25,5 +26,6 @@ class PhoneADB:
 
 
 if __name__ == "__main__":
-    # PhoneADB().screenshot()
+    pass
+    PhoneADB().screenshot().view()
     # d.click(418, 191)

@@ -1,18 +1,12 @@
 import config_override
 import unittest
-from unittest import mock
 from click_region import *
 from image_similarity import *
-import copy
-from parameterized import parameterized
-from tests.utility import assertNotRaises
 
 
 class TestClickRegion(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestClickRegion, self).__init__(*args, **kwargs)
-        patcher = mock.patch("image_similarity.config", config_override)
-        patcher.start()
 
     def setUp(self) -> None:
         self.blank_image = ImageFile("blank.png")
