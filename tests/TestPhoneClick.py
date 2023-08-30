@@ -1,8 +1,14 @@
 
+from unittest import mock
 import config_override
-from click_region import ClickRegion
+
 from adb import *
 import unittest
+import image
+
+
+class CONFIGURATION:
+    IMAGE_MATCHING_TEMPLATE_FOLDER = "C:\\Users\\Destiny Chan\\Documents\\Actual Scripts\\opencv_cached_bot\\tests\\images\\FEH"
 
 
 class TestPhoneClick(unittest.TestCase):
@@ -11,21 +17,36 @@ class TestPhoneClick(unittest.TestCase):
 
     def testClick(self):
         device = PhoneADB()
-        phone_screenshot = device.screenshot()
-        phone_screenshot.view()
-        # phone_screenshot = ImageFile("screenshot.png")
         self.app_icon = ImageFile("app_icon.png")
 
-        matches = ImageSimilarity(
-            self.app_icon, phone_screenshot).find_all_matches(match_type=MatchType.COLOUR).get_matches()
+    @mock.patch("adb.config.TIMEOUTS.TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED", 1)
+    def testTimeout(self):
+        device = PhoneADB()
+        self.assertRaises(TimeoutError,
+                          device.tap_image, "unfindable_image.png")
 
-        test_data_click_region = ClickRegion(matches)
+    @timer
+    def execute_close(self, device):
+        device.tap_image("close.png")
 
-        Visualise.draw_match_rectangles(
-            phone_screenshot,
-            test_data_click_region.get_original_match_rectangles())
-        Visualise.save_image(
-            phone_screenshot, self.__class__.__name__ + self._testMethodName)
+    @mock.patch("image.config.CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER", CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER)
+    def testTrainingTower(self):
+        device = PhoneADB()
+
+        while True:
+            device.tap_image("training_tower.png")
+            device.tap_image("fight_tt.png")
+            device.wait_for_image("inbattle.png")
+            device.tap_image("fight_battle.png")
+            time.sleep(3)
+            device.tap_image("autobattle.png")
+            device.tap_image("autobattle_confirm.png")
+            device.tap_image("stageclear.png", timeout=30)
+            while True:
+                try:
+                    self.execute_close(device)
+                except:
+                    break
 
 
 if __name__ == '__main__':
