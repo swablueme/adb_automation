@@ -1,4 +1,4 @@
-from tests.utility import assertNotRaises
+from utility import assertNotRaises
 from parameterized import parameterized
 import config_override
 import unittest

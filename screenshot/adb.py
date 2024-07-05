@@ -14,9 +14,9 @@ class PhoneADB:
     ADB_START_SLEEP_INTERVAL = 1
     SLEEP_INTERVAL_IMAGE_FIND = 0.2
 
-    def __init__(self):
-        self.device = adb.device(config.CONFIGURATION.MEMU_EMULATOR_NAME)
-        time.sleep(PhoneADB.ADB_START_SLEEP_INTERVAL)
+    def __init__(self, device_name=config.CONFIGURATION.MEMU_EMULATOR_NAME):
+        self.device = adb.device(
+            device_name)
 
     def screenshot(self) -> ImageFile:
         return ImageFile(self.device.screenshot())
@@ -57,6 +57,9 @@ class PhoneADB:
         self._tap(x, y)
 
         time.sleep(config.TIMEOUTS.SLEEP_INTERVAL_AFTER_TAP)
+
+    def pull(self, filepath, filename):
+        self.device.sync.pull(filepath, filename)
 
     def _tap(self, x: int, y: int) -> None:
         self.device.click(x, y)
