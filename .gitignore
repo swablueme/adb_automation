@@ -3,3 +3,4 @@ screenshot/images/*
 tests/images/*
 **/__pycache__/
 save files/*
+resources/*

@@ -14,7 +14,7 @@ class PhoneADB:
     ADB_START_SLEEP_INTERVAL = 1
     SLEEP_INTERVAL_IMAGE_FIND = 0.2
 
-    def __init__(self, device_name=config.CONFIGURATION.MEMU_EMULATOR_NAME):
+    def __init__(self, device_name=config.config_settings["MEMU_EMULATOR_NAME"]):
         self.device = adb.device(
             device_name)
 
@@ -33,13 +33,14 @@ class PhoneADB:
                 return matches, phone_screenshot
             time.sleep(PhoneADB.SLEEP_INTERVAL_IMAGE_FIND)
             current_time += PhoneADB.SLEEP_INTERVAL_IMAGE_FIND
+        timeout_configged = config.config_settings["TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED"]
         raise TimeoutError(
-            f"PhoneADB._found function timed out as it reached {current_time} without finding a match which exceeds {config.TIMEOUTS.TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED}")
+            f"PhoneADB._found function timed out as it reached {current_time} without finding a match which exceeds {timeout_configged}")
 
-    def wait_for_image(self, needle: str, timeout=config.TIMEOUTS.TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED, threshold=0.85, match_type=MatchType.COLOUR):
+    def wait_for_image(self, needle: str, timeout=config.config_settings["TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED"], threshold=0.85, match_type=MatchType.COLOUR):
         self._found(needle, timeout, threshold, match_type)
 
-    def tap_image(self, needle: str, timeout=config.TIMEOUTS.TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED, threshold=0.85, match_type=MatchType.COLOUR):
+    def tap_image(self, needle: str, timeout=config.config_settings["TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED"], threshold=0.85, match_type=MatchType.COLOUR):
         try:
             matches, phone_screenshot = self._found(
                 needle, timeout, threshold, match_type)
@@ -56,7 +57,7 @@ class PhoneADB:
         x, y = matched_click_region.get_centres()[0]
         self._tap(x, y)
 
-        time.sleep(config.TIMEOUTS.SLEEP_INTERVAL_AFTER_TAP)
+        time.sleep(config.config_settings["SLEEP_INTERVAL_AFTER_TAP"])
 
     def pull(self, filepath, filename):
         self.device.sync.pull(filepath, filename)

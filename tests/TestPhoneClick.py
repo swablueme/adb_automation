@@ -7,8 +7,7 @@ import unittest
 import image
 
 
-class CONFIGURATION:
-    IMAGE_MATCHING_TEMPLATE_FOLDER = "C:\\Users\\Destiny Chan\\Documents\\Actual Scripts\\opencv_cached_bot\\tests\\images\\FEH"
+IMAGE_MATCHING_TEMPLATE_FOLDER = "C:\\Users\\Destiny Chan\\Documents\\Actual Scripts\\opencv_cached_bot\\tests\\images\\FEH"
 
 
 class TestPhoneClick(unittest.TestCase):
@@ -19,11 +18,13 @@ class TestPhoneClick(unittest.TestCase):
         device = PhoneADB()
         self.app_icon = ImageFile("app_icon.png")
 
-    @mock.patch("adb.config.TIMEOUTS.TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED", 1)
+    @mock.patch.dict("adb.config.config_settings", {'TIMEOUT_UNTIL_IMAGE_FIND_OPERATION_CANCELLED': 1})
     def testTimeout(self):
         device = PhoneADB()
-        self.assertRaises(TimeoutError,
-                          device.tap_image, "unfindable_image.png")
+        with self.assertRaises(TimeoutError) as cm:
+            device.tap_image("unfindable_image.png")
+        self.assertEqual("PhoneADB._found function timed out as it reached 3.0000000000000004 without finding a match which exceeds 1", str(
+            cm.exception))
 
     @timer
     def execute_close(self, device):
@@ -33,7 +34,7 @@ class TestPhoneClick(unittest.TestCase):
         device = PhoneADB()
         device.screenshot().view()
 
-    @mock.patch("image.config.CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER", CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER)
+    @mock.patch.dict("image.config.config_settings", {'IMAGE_MATCHING_TEMPLATE_FOLDER': IMAGE_MATCHING_TEMPLATE_FOLDER})
     def testForgingBonds(self):
         device = PhoneADB()
 
@@ -69,7 +70,7 @@ class TestPhoneClick(unittest.TestCase):
                 except:
                     break
 
-    @mock.patch("image.config.CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER", CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER)
+    @mock.patch.dict("image.config.config_settings", {'IMAGE_MATCHING_TEMPLATE_FOLDER': IMAGE_MATCHING_TEMPLATE_FOLDER})
     def testTrainingTower(self):
         device = PhoneADB()
 

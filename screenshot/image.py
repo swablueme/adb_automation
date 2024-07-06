@@ -12,7 +12,7 @@ class ImageFile:
         self.image = None
         if type(image_value) == str:
             self.image = cv2.imread(os.path.join(
-                config.CONFIGURATION.IMAGE_MATCHING_TEMPLATE_FOLDER, image_value))
+                config.config_settings["IMAGE_MATCHING_TEMPLATE_FOLDER"], image_value))
         elif type(image_value) == Image:
             self.image = ImageConversion.PILtoNumpy(image_value)
             self.image = cv2.cvtColor(self.image, cv2.COLOR_RGB2BGR)
@@ -75,7 +75,7 @@ class Visualise:
 
     @staticmethod
     def save_image(image: ImageFile, file_name: str = "debug") -> ImageFile:
-        cv2.imwrite(os.path.join(config.CONFIGURATION.IMAGE_DEBUG_FOLDER,
+        cv2.imwrite(os.path.join(config.config_settings["IMAGE_DEBUG_FOLDER"],
                     file_name + ".png"), image.get_image())
         return image
 
