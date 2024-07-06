@@ -17,6 +17,7 @@ class PhoneADB:
     def __init__(self, device_name=config.config_settings["MEMU_EMULATOR_NAME"]):
         self.device = adb.device(
             device_name)
+        self.device.root()
 
     def screenshot(self) -> ImageFile:
         return ImageFile(self.device.screenshot())
@@ -59,8 +60,14 @@ class PhoneADB:
 
         time.sleep(config.config_settings["SLEEP_INTERVAL_AFTER_TAP"])
 
-    def pull(self, filepath, filename):
-        self.device.sync.pull(filepath, filename)
+    def pull(self, filepath, filename_or_filepath):
+        self.device.sync.pull(filepath, filename_or_filepath)
+
+    def push(self, src, destination):
+        self.device.sync.push(src, destination)
+
+    def shell(self, cmd):
+        return self.device.shell2(cmd)
 
     def _tap(self, x: int, y: int) -> None:
         self.device.click(x, y)
