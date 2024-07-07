@@ -11,12 +11,16 @@ import config_override
 from datetime import datetime
 from pathlib import PurePosixPath, PureWindowsPath
 from utility import *
+import binascii
 
 
 class TestPhonePull(unittest.TestCase):
     SAVE_FOLDER = "save files"
     SAVE_FOLDER_OUTPUT = "save file output"
 
+    def __init__(self, *args, **kwargs):
+        super(TestPhonePull, self).__init__(*args, **kwargs)
+        self.device = PhoneADB(config_override.config_settings["PHONE_NAME"])
     # @classmethod
     # def setUpClass(cls):
     #     remove_folder(TestPhonePull.SAVE_FOLDER)
@@ -24,7 +28,6 @@ class TestPhonePull(unittest.TestCase):
 
     def test_file_pull_from_phone_to_desktop(self):
         remove_folder(TestPhonePull.SAVE_FOLDER)
-        self.device = PhoneADB(config_override.config_settings["PHONE_NAME"])
         self.device.pull(
             config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"], TestPhonePull.SAVE_FOLDER)
 
@@ -36,8 +39,13 @@ class TestPhonePull(unittest.TestCase):
         shutil.copytree(TestPhonePull.SAVE_FOLDER,
                         config_override.config_settings["CITRA_SAVE_FOLDER_PC"], dirs_exist_ok=True)
 
+    def test_write300_playcoins(self):
+        playcoins = bytes.fromhex(
+            '00 4F 00 00 2C 01 00 00 00 00 00 00 00 00 00 00 E8 07 07 07')
+        self.device.push(
+            playcoins, config_override.config_settings["CITRA_PLAY_COINS_PHONE"])
+
     def test_push_desktop_citra_to_phone(self):
-        self.device = PhoneADB(config_override.config_settings["PHONE_NAME"])
 
         remove_folder(TestPhonePull.SAVE_FOLDER_OUTPUT)
         shutil.copytree(config_override.config_settings["CITRA_SAVE_FOLDER_PC"],
