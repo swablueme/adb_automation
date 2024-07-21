@@ -21,23 +21,18 @@ class TestPhonePull(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(TestPhonePull, self).__init__(*args, **kwargs)
         self.device = PhoneADB(config_override.config_settings["PHONE_NAME"])
-    # @classmethod
-    # def setUpClass(cls):
-    #     remove_folder(TestPhonePull.SAVE_FOLDER)
-    #     remove_folder(TestPhonePull.SAVE_FOLDER_OUTPUT)
 
     def test_file_pull_from_phone_to_desktop(self):
-        remove_folder(TestPhonePull.SAVE_FOLDER)
-        self.device.pull(
-            config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"], TestPhonePull.SAVE_FOLDER)
-
-    def test_folder_backup(self):
-        dt_string = datetime.now().strftime("%d-%m-%Y %H-%M-%S")
-        shutil.copytree(
-            config_override.config_settings["CITRA_SAVE_FOLDER_PC"], os.path.join(Path(config_override.config_settings["CITRA_SAVE_FOLDER_PC"]).parent, dt_string))
-        clear_folder(config_override.config_settings["CITRA_SAVE_FOLDER_PC"])
-        shutil.copytree(TestPhonePull.SAVE_FOLDER,
-                        config_override.config_settings["CITRA_SAVE_FOLDER_PC"], dirs_exist_ok=True)
+        for (phone, pc) in zip(config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"], config_override.config_settings["CITRA_SAVE_FOLDER_PC"]):
+            remove_folder(TestPhonePull.SAVE_FOLDER)
+            self.device.pull(
+                phone, TestPhonePull.SAVE_FOLDER)
+            dt_string = datetime.now().strftime("%d-%m-%Y %H-%M-%S")
+            shutil.copytree(
+                pc, os.path.join(Path(pc).parent, dt_string))
+            clear_folder(pc)
+            shutil.copytree(TestPhonePull.SAVE_FOLDER,
+                            pc, dirs_exist_ok=True)
 
     def test_write300_playcoins(self):
         playcoins = bytes.fromhex(
@@ -46,28 +41,17 @@ class TestPhonePull(unittest.TestCase):
             playcoins, config_override.config_settings["CITRA_PLAY_COINS_PHONE"])
 
     def test_push_desktop_citra_to_phone(self):
+        for (phone, pc) in zip(config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"], config_override.config_settings["CITRA_SAVE_FOLDER_PC"]):
+            remove_folder(TestPhonePull.SAVE_FOLDER_OUTPUT)
+            shutil.copytree(pc,
+                            TestPhonePull.SAVE_FOLDER_OUTPUT, dirs_exist_ok=True)
 
-        remove_folder(TestPhonePull.SAVE_FOLDER_OUTPUT)
-        shutil.copytree(config_override.config_settings["CITRA_SAVE_FOLDER_PC"],
-                        TestPhonePull.SAVE_FOLDER_OUTPUT, dirs_exist_ok=True)
+            files = [os.path.normpath(os.path.join(pc, file)) for file in os.listdir(
+                pc)]
 
-        files = [os.path.normpath(os.path.join(config_override.config_settings["CITRA_SAVE_FOLDER_PC"], file)) for file in os.listdir(
-            config_override.config_settings["CITRA_SAVE_FOLDER_PC"])]
-
-        for file in files:
-            self.device.push(file,
-                             config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"])
-
-        # def test_rename_folder(self):
-        #     self.device = PhoneADB(config_override.config_settings["PHONE_NAME"])
-        #     dt_string = os.path.join(Path(
-        #         config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"]).parent, datetime.now().strftime("%d-%m-%Y %H-%M-%S"))
-        #     destination = str(PureWindowsPath(dt_string).as_posix())
-        #     src = str(PurePosixPath(
-        #         config_override.config_settings["CITRA_SAVE_FOLDER_PHONE"]))
-        #     command = "su -c mv '{src}' '{destination}}'"
-        #     value = self.device.shell(command)
-        #     print()
+            for file in files:
+                self.device.push(file,
+                                 phone)
 
     def push_saves(self):
         pass
